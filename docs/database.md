@@ -60,6 +60,17 @@ The database may contain these tables:
 | role | CharField (cashier / owner / manager) |
 | created_at | DateTimeField |
 
+**The resitration and login logic**
+
+Register → creates a personal account (no organization yet)
+After login → "Create your organization" screen (name, location, logo)
+When they create it → they become owner of that organization
+
+Owner registers → creates organization → becomes owner
+Owner invites the cashier (by email or phone, or a simple code)
+Cashier registers → accepts the invite → is now part of that organization with role = cashier
+
+
 **For the future:** a Membership table (user_id, organization) if a person works at more than one shop. Not for MVP.
 
 ### Categories
@@ -183,3 +194,7 @@ Stock of any product = SUM(IN) - SUM(OUT). This table is the heart.
 | created_at | DateTimeField |
 
 One row per event. It must answer: who, which shop, what, which record, when.
+
+
+
+**Allow user to order from any customers shop with few payment and additionally**

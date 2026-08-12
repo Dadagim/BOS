@@ -1,0 +1,28 @@
+from django.urls import path
+
+from .views import *
+
+urlpatterns = [
+#     ----------------------uer and Authentication section
+    path('users/', UserList.as_view()),
+    path('users/<int:pk>/', UserDetail.as_view()),
+    path('users/regsiter/', RegisterView.as_view()),
+    path('users/me/', MeView.as_view()),
+    path('organization/', OrganizationList.as_view()),
+    path('organization/<int:pk>/', OrganizationDetail.as_view()),
+
+
+#     ----------------------Products and Inventory Section
+    path('catalog/products/', ProductsList.as_view()),
+    path('catalog/products/<int:pk>/', ProductDetail.as_view()),
+    path('catalog/category/', CategoryList.as_view()),
+    path('catalog/category/<int:pk>/', CategoryList.as_view()),
+
+#     ----------------------👥 Customers & Suppliers (5 each — same shape)
+    path('customers/', CustomerList.as_view()),
+    path('customers/<int:pk>/', CustomerDetail.as_view()),
+
+    path('suppliers/', SupplierList.as_view()),
+    path('suppliers/<int:pk>/', SupplierDetail.as_view()),
+
+]

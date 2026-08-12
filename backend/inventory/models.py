@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
 class Organization(models.Model):
     name = models.CharField(max_length=200)
     location = models.CharField(max_length=200, blank=True)
@@ -36,7 +35,7 @@ class User(AbstractUser):
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-
+    # organization = models.ForeignKey(Organization, related_name="category", on_delete=models.CASCADE)
     def __str__(self):
         return self.name
 

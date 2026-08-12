@@ -69,7 +69,7 @@ Current stock — at any moment, how many sacks of rice do we have?
 - email -> Email
 
 # Products
-** tracks what products or Items are available 
+** tracks what products or Items are available
 
 - id -> IntegerField
 - name -> CharField
