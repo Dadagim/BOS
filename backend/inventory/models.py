@@ -50,6 +50,7 @@ class Product(models.Model):
         Organization, on_delete=models.CASCADE, related_name="products"
     )
     price = models.DecimalField(max_digits=12, decimal_places=2)
+    barcode = models.CharField(max_length=50, unique=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
