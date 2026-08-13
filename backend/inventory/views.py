@@ -1,7 +1,12 @@
+from django.db.models import QuerySet
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, permissions, request
 
 from .models import *
+from .models import Sale, User
 from .serializers import *
 from .permissions import IsOwnerOrReadOnly
 
@@ -137,4 +142,100 @@ class SupplierDetail(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         return Supplier.objects.filter(organization=user.organization)
 
+
+'''
+💰 Sales (5)
+'''
+
+class SalesView(generics.ListCreateAPIView):
+    serializer_class = SaleSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff or user.is_superuser:
+            return Sale.objects.all()
+        else:
+            return Sale.objects.filter(organization=user.organization)
+
+class ProductStock(APIView):
+
+    def get(self, *args, **kwargs):
+        item_id = kwargs.get('pk')
+
+        # get the product from the url bar
+        item = Product.objects.get(id=item_id)
+
+        print(item)
+
+
+        in_move = InventoryMovement.objects.filter(purchase_item=item, type='in')
+        out_move = InventoryMovement.objects.filter(sale_item=item, type='out')
+
+
+        total_input = 0
+        total_out = 0
+
+        if len(in_move) > 0 or len(out_move) > 0:
+            for move in in_move:
+                total_input += move.quantity
+
+            for move in out_move:
+                total_out += move.quantity
+
+            stock = total_input - total_out
+
+            return Response({"Total Stock": stock})
+        else:
+            return Response({"message": "No stock to calculate."})
+
+
+
+
+class SaleDetail(APIView):
+
+    def get(self, *args, **kwargs):
+        user = self.request.user
+        sale_id = kwargs.get('pk')
+        sale = Sale.objects.get(id=sale_id)
+
+
+        return Response({'data': SaleSerializer(sale).data, "total": sale.total()})
+
+
+
+class SoldItemsView(generics.ListCreateAPIView):
+    serializer_class = SoldItemSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff or user.is_superuser:
+            return SoldItem.objects.all()
+        else:
+            return SoldItem.objects.filter(sale__organization = user.organization)
+
+
+class SoldItemDetail(APIView):
+    serializer_class = SoldItemSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff or user.is_superuser:
+            return Sale.objects.all()
+        else:
+            return SoldItem.objects.filter(sale__organization = user.organization)
+
+
+
+class SoldItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = SoldItemSerializer
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff or user.is_superuser:
+            return SoldItem.objects.all()
+        else:
+            return SoldItem.objects.filter(sale__organization = user.organization)
 

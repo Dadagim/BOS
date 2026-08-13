@@ -45,16 +45,16 @@
   `POST /api/auth/register/`, `POST /api/auth/token/`, `POST /api/auth/token/refresh/`, `GET /api/auth/me/`
   Test in your browser at the browsable API or with Postman.
 
-- [ ] **1.6 Build the product API (serializers + views)**
+- [ checked] **1.6 Build the product API (serializers + views)**
   Tool: DRF Serializers + ViewSets in PyCharm.
   Create: `GET/POST/PATCH/DELETE /api/products/` and `/api/categories/`.
   Rule: every query is scoped to the logged-in user's organization.
 
-- [ ] **1.7 Build customer + supplier API**
+- [ checked] **1.7 Build customer + supplier API**
   Tool: same pattern as products. `GET/POST/PATCH/DELETE /api/customers/`, `/api/suppliers/`.
   Same tenant scoping.
 
-- [ ] **1.8 Commit**
+- [checked ] **1.8 Commit**
   Tool: PowerShell terminal → `git add .` then `git commit -m "Phase 1: auth and basic API"`
 
 **Definition of done:** you can register a new user, log in, and create products/customers/suppliers through the API, and every user only sees THEIR shop's data.
@@ -65,12 +65,13 @@
 
 **Goal:** A sale and a purchase actually change stock — automatically, correctly.
 
-- [ ] **2.1 Create a sale with items — transactionally**
+- [checked] **2.1 Create a sale with items — transactionally**
   Tool: Django shell (`..\.venv\Scripts\python.exe manage.py shell`).
   Write a small script: create a Sale + SoldItems. Verify the total calculates from lines.
 
-- [ ] **2.2 Auto-create Inventory Movement on every sale**
-  Tool: PyCharm → add logic in the sale-creation service.
+- [chekced] **2.2 Auto-create Inventory Movement on every sale**
+  Tool: PyCharm → add logic in the sale-creation s
+- ervice.
   Every SoldItem creates a Movement (type=OUT, linked to that sale item).
   Test in the shell: after a sale, check movements exist.
 

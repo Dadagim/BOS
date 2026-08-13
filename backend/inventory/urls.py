@@ -25,4 +25,14 @@ urlpatterns = [
     path('suppliers/', SupplierList.as_view()),
     path('suppliers/<int:pk>/', SupplierDetail.as_view()),
 
+#     ------------------------💰 Sales (5)
+    path('sales/', SalesView.as_view()),
+    path('sales/<int:pk>/', SaleDetail.as_view()),
+
+    path('soldItems/', SoldItemsView.as_view()),
+    path('soldItems/<int:pk>/', SoldItemDetail.as_view()),
+
+
+    path('products/<int:pk>/stock/', ProductStock.as_view())
+
 ]

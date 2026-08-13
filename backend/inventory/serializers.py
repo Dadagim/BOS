@@ -1,6 +1,8 @@
-from rest_framework import serializers
-from .models import User, Product, Organization, Category, Customer, Supplier
+from typing import Any
 
+from rest_framework import serializers
+
+from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,3 +47,44 @@ class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supplier
         fields = '__all__'
+
+
+
+'''
+💰 Sales (5)
+'''
+
+
+
+class SaleSerializer(serializers.ModelSerializer):
+    organization = OrganizationSerializer(read_only=True)
+    class Meta:
+        model = Sale
+        fields = ['id','organization', 'customer', "status", "created_by", "created_at"]
+
+class SoldItemSerializer(serializers.ModelSerializer):
+    sale = SaleSerializer(read_only=True)
+    product = ProductSerializer(read_only=True)
+    class Meta:
+        model = SoldItem
+        fields = '__all__'
+
+
+    def create(self, validated_data: Any):
+        product = validated_data.get('product')
+        sale = validated_data.get('sale')
+        quantity = validated_data.get('quantity')
+
+        item = SoldItem.objects.create(**validated_data)
+
+
+        inventory, created = InventoryMovement.objects.get_or_create(organization=sale.organization,
+                                                                     product=product,
+                                                                     quantity=quantity,
+                                                                     type="out",
+                                                                     created_by=sale.created_by,
+                                                                     sale_item=item,
+                                                                     )
+        return item
+
+
