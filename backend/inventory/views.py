@@ -169,8 +169,8 @@ class ProductStock(APIView):
         print(item)
 
 
-        in_move = InventoryMovement.objects.filter(purchase_item=item, type='in')
-        out_move = InventoryMovement.objects.filter(sale_item=item, type='out')
+        in_move = InventoryMovement.objects.filter(product=item, type='in')
+        out_move = InventoryMovement.objects.filter(product=item, type='out')
 
 
         total_input = 0
@@ -185,7 +185,7 @@ class ProductStock(APIView):
 
             stock = total_input - total_out
 
-            return Response({"Total Stock": stock})
+            return Response({"Total Stock": stock, 'sale stock': total_out, "purchase stock": total_input})
         else:
             return Response({"message": "No stock to calculate."})
 
@@ -239,3 +239,33 @@ class SoldItemDetail(generics.RetrieveUpdateDestroyAPIView):
         else:
             return SoldItem.objects.filter(sale__organization = user.organization)
 
+
+
+class PurchaseListView(generics.ListCreateAPIView):
+    serializer_class = PurchaseSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff or user.is_superuser:
+            return Purchase.objects.all()
+
+        elif user.is_authenticated:
+            return Purchase.objects.filter(organization=user.organization)
+        else:
+            return None
+
+class PurchaseDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    serializer_class = PurchaseSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff or user.is_superuser:
+            return Purchase.objects.all()
+
+        elif user.is_authenticated:
+            return Purchase.objects.filter(organization=user.organization)
+        else:
+            return None

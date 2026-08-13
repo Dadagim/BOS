@@ -69,40 +69,38 @@
   Tool: Django shell (`..\.venv\Scripts\python.exe manage.py shell`).
   Write a small script: create a Sale + SoldItems. Verify the total calculates from lines.
 
-- [chekced] **2.2 Auto-create Inventory Movement on every sale**
-  Tool: PyCharm → add logic in the sale-creation s
-- ervice.
-  Every SoldItem creates a Movement (type=OUT, linked to that sale item).
+- [checked] **2.2 Auto-create Inventory Movement on every sale**
+  Tool: PyCharm → add logic in the sale-creation service.
+- Every SoldItem creates a Movement (type=OUT, linked to that sale item).
   Test in the shell: after a sale, check movements exist.
 
-- [ ] **2.3 The stock endpoint (calculated, never stored)**
+- [checked] **2.3 The stock endpoint (calculated, never stored)**
   Tool: DRF + ORM aggregation in PyCharm.
   `GET /api/products/{id}/stock/` → returns SUM(IN) - SUM(OUT) from movements.
   Verify it matches a hand-calculated example.
 
-- [ ] **2.4 Purchases: create → draft → ordered → received**
-  Tool: Django shell.
-  Create a Purchase (status=draft), add PurchasedItems, then a function that moves status forward.
-  Verify status transitions only go forward (draft→ordered→received).
+  - [checked] **2.4 Purchases: create → draft → ordered → received**
+    Tool: Django shell.
+    Create a Purchase (status=draft), add PurchasedItems, then a function that moves status forward.
+    Verify status transitions only go forward (draft→ordered→received).
 
-- [ ] **2.5 Receiving creates IN movements**
+- [checked] **2.5 Receiving creates IN movements**
   Tool: PyCharm logic.
   When a purchase becomes `received`, create Movements (type=IN) linked to its items.
   Stock should now go UP after receiving.
 
-- [ ] **2.6 Protect stock from going negative**
+- [] **2.6 Protect stock from going negative**
   Tool: transaction + validation in PyCharm.
   Selling 10 bananas when only 3 exist must FAIL with a clear error.
   Test it in the shell.
 
-- [ ] **2.7 Write tests for money rules**
+- [] **2.7 Write tests for money rules**
   Tool: PyCharm → `backend/inventory/tests.py`. Use Django's built-in `TestCase`.
   Test: total calculation, movement creation, negative stock blocked, status flow.
   Run: `..\.venv\Scripts\python.exe manage.py test`
 
-- [ ] **2.8 Commit**
+- [] **2.8 Commit**
   Tool: `git add .` + `git commit -m "Phase 2: sales, purchases, inventory"`
-
 **Definition of done:** sell → stock goes down + movement recorded. Receive purchase → stock goes up. You can't sell what you don't have. All covered by passing tests.
 
 ---

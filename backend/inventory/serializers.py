@@ -87,4 +87,17 @@ class SoldItemSerializer(serializers.ModelSerializer):
                                                                      )
         return item
 
+"""
+Purchase
+"""
 
+class PurchaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Purchase
+        fields = '__all__'
+
+
+class PurchaseItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchasedItem
+        field = '__all__'
