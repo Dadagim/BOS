@@ -1,6 +1,8 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import QuerySet
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.serializers import BaseSerializer
 from rest_framework.views import APIView
 from rest_framework import generics, permissions, request
@@ -106,6 +108,57 @@ class CategoryList(generics.ListCreateAPIView):
     #     return Category.objects.filter(organization=user.organization)
     #
 
+class ProductStock(APIView):
+
+    def get(self, *args, **kwargs):
+        item_id = kwargs.get('pk')
+
+        # get the product from the url bar
+        item = Product.objects.get(id=item_id)
+
+        print(item)
+
+
+        in_move = InventoryMovement.objects.filter(product=item, type='in')
+        out_move = InventoryMovement.objects.filter(product=item, type='out')
+
+
+        total_input = 0
+        total_out = 0
+
+        if len(in_move) > 0 or len(out_move) > 0:
+            for move in in_move:
+                total_input += move.quantity
+
+            for move in out_move:
+                total_out += move.quantity
+
+            stock = total_input - total_out
+
+            return Response({"Total Stock": stock, 'sale stock': total_out, "purchase stock": total_input})
+        else:
+            return Response({"message": "No stock to calculate."})
+
+
+
+
+class ProductScan(APIView):
+
+    def get(self, *args, **kwargs):
+
+        barcode = kwargs.get('barcode')
+
+        try:
+            product = Product.objects.get(barcode=barcode)
+
+            serializer = ProductSerializer(product)
+
+            return Response(serializer.data)
+
+        except Product.DoesNotExist:
+            return Response({"detail": "Product not found. Learn to scan"}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 
 '''
@@ -162,36 +215,41 @@ class SalesView(generics.ListCreateAPIView):
         else:
             return Sale.objects.filter(organization=user.organization)
 
-class ProductStock(APIView):
+
+class AddItemToSale(APIView):
 
     def get(self, *args, **kwargs):
-        item_id = kwargs.get('pk')
+        try:
+            sale = Sale.objects.get(id=kwargs.get("sale_id"))
 
-        # get the product from the url bar
-        item = Product.objects.get(id=item_id)
+            filtered = Product.objects.filter(organization=sale.organization)
 
-        print(item)
+            serializer = ProductSerializer(filtered, many=True)
+            return Response(serializer.data)
+        except ObjectDoesNotExist:
+            return Response({"detail": "Sale not found "}, status=status.HTTP_404_NOT_FOUND)
+        
+    def post(self, request, *args, **kwargs):
+        
+        print(kwargs.get("sale_id"))
+        print(request.data)
+        product_id = request.data.get("product_id")
 
+        try:
+            sale = Sale.objects.get(id=kwargs.get("sale_id"))
+            product = Product.objects.get(id=product_id)
+            
+            if sale.status == "open":
+                added, created = SoldItem.objects.get_or_create(sale=sale, product=product, price_at_time=product.price)
 
-        in_move = InventoryMovement.objects.filter(product=item, type='in')
-        out_move = InventoryMovement.objects.filter(product=item, type='out')
+                if created:
+                    created.quantity += 1
 
-
-        total_input = 0
-        total_out = 0
-
-        if len(in_move) > 0 or len(out_move) > 0:
-            for move in in_move:
-                total_input += move.quantity
-
-            for move in out_move:
-                total_out += move.quantity
-
-            stock = total_input - total_out
-
-            return Response({"Total Stock": stock, 'sale stock': total_out, "purchase stock": total_input})
-        else:
-            return Response({"message": "No stock to calculate."})
+                return Response(SoldItemSerializer(added).data)
+            else:
+                return Response({"detail": "You can't add to completed cart."})
+        except ObjectDoesNotExist:
+            return Response({"detail": "Sale not found"})
 
 
 
@@ -231,7 +289,7 @@ class SoldItemDetail(APIView):
         else:
             return SoldItem.objects.filter(sale__organization = user.organization)
 
-
+    
 
 class SoldItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SoldItemSerializer

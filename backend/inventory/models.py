@@ -82,9 +82,15 @@ class Supplier(models.Model):
 
 class Sale(models.Model):
     class Status(models.TextChoices):
+        OPEN = 'open', 'Open'
         COMPLETED = "completed", "Completed"
         CANCELLED = "cancelled", "Cancelled"
         AWAITING_PAYMENT = "awaiting_payment", "Awaiting payment"
+
+    class PaymentChoice(models.TextChoices):
+        TELEBIRR = 'telebirr', 'Telebirr'
+        CASH = 'cash', 'cash'
+        CREDIT = 'credit', 'Credit'
 
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, related_name="sales"
@@ -92,8 +98,9 @@ class Sale(models.Model):
     customer = models.ForeignKey(
         Customer, on_delete=models.PROTECT, related_name="sales"
     )
+    payment_method = models.CharField(max_length=10, choices=PaymentChoice.choices, default=PaymentChoice.CASH)
     status = models.CharField(
-        max_length=20, choices=Status.choices, default=Status.COMPLETED
+        max_length=20, choices=Status.choices, default=Status.OPEN
     )
     created_by = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name="sales_created"

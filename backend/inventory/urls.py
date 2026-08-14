@@ -13,10 +13,12 @@ urlpatterns = [
 
 
 #     ----------------------Products and Inventory Section
-    path('catalog/products/', ProductsList.as_view()),
-    path('catalog/products/<int:pk>/', ProductDetail.as_view()),
-    path('catalog/category/', CategoryList.as_view()),
-    path('catalog/category/<int:pk>/', CategoryList.as_view()),
+    path('products/', ProductsList.as_view()),
+    path('products/<int:pk>/', ProductDetail.as_view()),
+    path('category/', CategoryList.as_view()),
+    path('category/<int:pk>/', CategoryList.as_view()),
+    path('products/scan/<int:barcode>/', ProductScan.as_view()),
+
 
 #     ----------------------👥 Customers & Suppliers (5 each — same shape)
     path('customers/', CustomerList.as_view()),
@@ -28,6 +30,7 @@ urlpatterns = [
 #     ------------------------💰 Sales (5)
     path('sales/', SalesView.as_view()),
     path('sales/<int:pk>/', SaleDetail.as_view()),
+    path('sales/<int:sale_id>/items', AddItemToSale.as_view()),
 
     path('soldItems/', SoldItemsView.as_view()),
     path('soldItems/<int:pk>/', SoldItemDetail.as_view()),

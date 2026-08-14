@@ -1,6 +1,6 @@
 from typing import Any
 
-from django.db.models import Sum
+from django.db.models import Sum, query
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -61,9 +61,14 @@ class SupplierSerializer(serializers.ModelSerializer):
 
 class SaleSerializer(serializers.ModelSerializer):
     organization = OrganizationSerializer(read_only=True)
+    organization = serializers.PrimaryKeyRelatedField(write_only=True,
+                                                      queryset=Organization.objects.all())
     class Meta:
         model = Sale
-        fields = ['id','organization', 'customer', "status", "created_by", "created_at"]
+        fields = '__all__'
+
+
+# 
 
 class SoldItemSerializer(serializers.ModelSerializer):
     # sale = SaleSerializer(read_only=True)

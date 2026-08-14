@@ -45,12 +45,12 @@
   `POST /api/auth/register/`, `POST /api/auth/token/`, `POST /api/auth/token/refresh/`, `GET /api/auth/me/`
   Test in your browser at the browsable API or with Postman.
 
-- [ checked] **1.6 Build the product API (serializers + views)**
+- [checked] **1.6 Build the product API (serializers + views)**
   Tool: DRF Serializers + ViewSets in PyCharm.
   Create: `GET/POST/PATCH/DELETE /api/products/` and `/api/categories/`.
   Rule: every query is scoped to the logged-in user's organization.
 
-- [ checked] **1.7 Build customer + supplier API**
+- [checked] **1.7 Build customer + supplier API**
   Tool: same pattern as products. `GET/POST/PATCH/DELETE /api/customers/`, `/api/suppliers/`.
   Same tenant scoping.
 
@@ -99,7 +99,7 @@
   Test: total calculation, movement creation, negative stock blocked, status flow.
   Run: `..\.venv\Scripts\python.exe manage.py test`
 
-- [] **2.8 Commit**
+- [checked] **2.8 Commit**
   Tool: `git add .` + `git commit -m "Phase 2: sales, purchases, inventory"`
 **Definition of done:** sell → stock goes down + movement recorded. Receive purchase → stock goes up. You can't sell what you don't have. All covered by passing tests.
 
@@ -109,15 +109,15 @@
 
 **Goal:** The cashier can scan, build a cart, checkout with VAT.
 
-- [ ] **3.1 Add `barcode` to Product**
+- [checked] **3.1 Add `barcode` to Product**
   Tool: PyCharm → `models.py`, add `barcode = models.CharField(max_length=50, unique=True, blank=True, null=True)`.
   Run `..\.venv\Scripts\python.exe manage.py makemigrations` then `migrate`.
 
-- [ ] **3.2 Add `payment_method` to Sale**
-  Tool: PyCharm → `models.py`. Choices: cash / telebirr / card / credit.
+- [checked] **3.2 Add `payment_method` to Sale**
+  Tool: PyyCharm → `models.p`. Choices: cash / telebirr / card / credit.
   Also add a new Sale status: `open` (the cart). Migration again.
 
-- [ ] **3.3 Scan endpoint**
+- [checked] **3.3 Scan endpoint**
   Tool: DRF. `GET /api/products/scan/{barcode}/` → returns the product or 404.
   If not found → frontend shows "new product" prompt (scan-to-learn).
 
