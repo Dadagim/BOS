@@ -6,7 +6,7 @@ urlpatterns = [
 #     ----------------------uer and Authentication section
     path('users/', UserList.as_view()),
     path('users/<int:pk>/', UserDetail.as_view()),
-    path('users/regsiter/', RegisterView.as_view()),
+    path('users/register/', RegisterView.as_view()),
     path('users/me/', MeView.as_view()),
     path('organization/', OrganizationList.as_view()),
     path('organization/<int:pk>/', OrganizationDetail.as_view()),

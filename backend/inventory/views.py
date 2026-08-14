@@ -39,9 +39,13 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
         elif user.is_authenticated:
             return User.objects.get(user=user)
 
-class MeView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+class MeView(APIView):
+
+    def get(self):
+        user = self.request.user
+
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 
 class OrganizationList(generics.ListCreateAPIView):
@@ -231,6 +235,7 @@ class SoldItemDetail(APIView):
 
 class SoldItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SoldItemSerializer
+
     def get_queryset(self):
         user = self.request.user
 
@@ -238,6 +243,8 @@ class SoldItemDetail(generics.RetrieveUpdateDestroyAPIView):
             return SoldItem.objects.all()
         else:
             return SoldItem.objects.filter(sale__organization = user.organization)
+
+
 
 
 

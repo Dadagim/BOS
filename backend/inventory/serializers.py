@@ -1,6 +1,9 @@
 from typing import Any
 
+from django.db.models import Sum
+
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from .models import *
 
@@ -63,8 +66,8 @@ class SaleSerializer(serializers.ModelSerializer):
         fields = ['id','organization', 'customer', "status", "created_by", "created_at"]
 
 class SoldItemSerializer(serializers.ModelSerializer):
-    sale = SaleSerializer(read_only=True)
-    product = ProductSerializer(read_only=True)
+    # sale = SaleSerializer(read_only=True)
+    # product = ProductSerializer(read_only=True)
     class Meta:
         model = SoldItem
         fields = '__all__'
@@ -75,16 +78,29 @@ class SoldItemSerializer(serializers.ModelSerializer):
         sale = validated_data.get('sale')
         quantity = validated_data.get('quantity')
 
+        product = Product.objects.get(id=product.id)
+
+        # Stock on hand = SUM(IN) - SUM(OUT) from movements. Never stored.
+        stock_in = InventoryMovement.objects.filter(
+            product=product, type=InventoryMovement.Type.IN
+        ).aggregate(total=Sum('quantity'))['total'] or 0
+
+        stock_out = InventoryMovement.objects.filter(
+            product=product, type=InventoryMovement.Type.OUT
+        ).aggregate(total=Sum('quantity'))['total'] or 0
+
+        if stock_in - stock_out < quantity:
+            raise ValidationError(detail='Low stock quantity')
+
         item = SoldItem.objects.create(**validated_data)
 
-
         inventory, created = InventoryMovement.objects.get_or_create(organization=sale.organization,
-                                                                     product=product,
-                                                                     quantity=quantity,
-                                                                     type="out",
-                                                                     created_by=sale.created_by,
-                                                                     sale_item=item,
-                                                                     )
+                                                                         product=product,
+                                                                         quantity=quantity,
+                                                                         type="out",
+                                                                         created_by=sale.created_by,
+                                                                         sale_item=item,
+                                                                         )
         return item
 
 """

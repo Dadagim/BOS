@@ -89,7 +89,7 @@
   When a purchase becomes `received`, create Movements (type=IN) linked to its items.
   Stock should now go UP after receiving.
 
-- [] **2.6 Protect stock from going negative**
+- [checked] **2.6 Protect stock from going negative**
   Tool: transaction + validation in PyCharm.
   Selling 10 bananas when only 3 exist must FAIL with a clear error.
   Test it in the shell.

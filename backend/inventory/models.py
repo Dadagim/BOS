@@ -134,6 +134,18 @@ class Purchase(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+    def change_status(self, current_Status):
+        if current_Status == 'draft':
+            self.status = 'ordered'
+        elif current_Status == 'ordered':
+            self.status = 'received'
+        else:
+            self.status = current_Status
+
+
+
+
+
 class PurchasedItem(models.Model):
     purchase = models.ForeignKey(
         Purchase, on_delete=models.CASCADE, related_name="items"
