@@ -96,7 +96,7 @@ class Sale(models.Model):
         Organization, on_delete=models.CASCADE, related_name="sales"
     )
     customer = models.ForeignKey(
-        Customer, on_delete=models.PROTECT, related_name="sales"
+        Customer, on_delete=models.PROTECT, related_name="sales", null=True, blank=True
     )
     payment_method = models.CharField(max_length=10, choices=PaymentChoice.choices, default=PaymentChoice.CASH)
     status = models.CharField(

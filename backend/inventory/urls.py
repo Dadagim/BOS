@@ -37,7 +37,10 @@ urlpatterns = [
 
 
     path('products/<int:pk>/stock/', ProductStock.as_view()),
+    path('stock/', StockListView.as_view()),
     path('purchase/', PurchaseListView.as_view()),
-    path('purchase/<int:pk>/', PurchaseDetail.as_view())
+    path('purchase/<int:pk>/', PurchaseDetail.as_view()),
+    path('purchases/', PurchaseListView.as_view()),
+    path('purchases/<int:pk>/', PurchaseDetail.as_view())
 
 ]
